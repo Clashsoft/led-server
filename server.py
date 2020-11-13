@@ -59,6 +59,14 @@ def rainbow(strip, wait_ms=20, iterations=1):
         time.sleep(wait_ms/1000.0)
 
 
+# Create NeoPixel object with appropriate configuration.
+strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
+# Intialize the library (must be called once before other functions).
+strip.begin()
+
+app = Flask(__name__)
+
+
 @app.route('/api/effect', methods=['POST'])
 def set_color():
     body = request.json
@@ -74,10 +82,3 @@ def set_color():
         }
 
     return {}
-
-# Create NeoPixel object with appropriate configuration.
-strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-# Intialize the library (must be called once before other functions).
-strip.begin()
-
-app = Flask(__name__)
