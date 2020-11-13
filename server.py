@@ -67,9 +67,6 @@ strip.begin()
 app = Flask(__name__)
 
 
-def options():
-
-
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
 def set_color():
     if request.method == 'OPTIONS':
