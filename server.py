@@ -38,6 +38,18 @@ def colorWipe(strip, color, wait_ms=20):
         time.sleep(wait_ms/1000.0)
 
 
+def theaterChase(strip, color, iterations=1, wait_ms=50):
+    """Movie theater light style chaser animation."""
+    for j in range(iterations):
+        for q in range(3):
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, color)
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, 0)
+
+
 def wheel(pos):
     """Generate rainbow colors across 0-255 positions."""
     if pos < 85:
@@ -57,6 +69,27 @@ def rainbow(strip, wait_ms=20, iterations=1):
             strip.setPixelColor(i, wheel((i+j) & 255))
         strip.show()
         time.sleep(wait_ms/1000.0)
+
+
+def rainbowCycle(strip, wait_ms=20, iterations=1):
+    """Draw rainbow that uniformly distributes itself across all pixels."""
+    for j in range(256*iterations):
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, wheel((int(i * 256 / strip.numPixels()) + j) & 255))
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
+
+def theaterChaseRainbow(strip, wait_ms=50):
+    """Rainbow movie theater light style chaser animation."""
+    for j in range(256):
+        for q in range(3):
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, wheel((i+j) % 255))
+            strip.show()
+            time.sleep(wait_ms/1000.0)
+            for i in range(0, strip.numPixels(), 3):
+                strip.setPixelColor(i+q, 0)
 
 
 # Create NeoPixel object with appropriate configuration.
@@ -79,6 +112,14 @@ def set_color():
         colorSet(strip, color)
     elif effect == 'wipe':
         colorWipe(strip, color)
+    elif effect == 'theaterChase':
+        theaterChase(strip, color)
+    elif effect == 'rainbow':
+        rainbow(strip)
+    elif effect == 'rainbowCycle':
+        rainbowCycle(strip)
+    elif effect == 'theaterChaseRainbow':
+        theaterChaseRainbow(strip)
     else:
         return {
             'error': 'unknown effect',
