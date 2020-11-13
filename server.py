@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 from wakeonlan import send_magic_packet
 from rpi_ws281x import *
