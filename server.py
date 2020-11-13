@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, make_response
 
 from wakeonlan import send_magic_packet
 from rpi_ws281x import *
@@ -67,8 +67,14 @@ strip.begin()
 app = Flask(__name__)
 
 
-@app.route('/api/effect', methods=['POST'])
+def options():
+
+
+@app.route('/api/effect', methods=['POST', 'OPTIONS'])
 def set_color():
+    if request.method == 'OPTIONS':
+        return options()
+
     body = request.json
     effect = body['effect']
     color = Color(body['r'], body['g'], body['b'])
@@ -82,6 +88,14 @@ def set_color():
         }
 
     return {}
+
+
+def options():
+    response = make_response()
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = '*'
+    return response
 
 
 @app.after_request
