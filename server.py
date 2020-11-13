@@ -92,6 +92,16 @@ def theaterChaseRainbow(strip, wait_ms=20):
                 strip.setPixelColor(i+q, 0)
 
 
+def snake(strip, color=Color(255, 255, 255), wait_ms=20, width=5):
+    black = Color(0, 0, 0)
+    for i in range(strip.numPixels()):
+        for j in range(strip.numPixels()):
+            delta = j - i
+            strip.setPixelColor(j, color if delta >= 0 and delta < width else black)
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
+
 # Create NeoPixel object with appropriate configuration.
 strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
 # Intialize the library (must be called once before other functions).
@@ -120,6 +130,8 @@ def set_color():
         rainbowCycle(strip)
     elif effect == 'theaterChaseRainbow':
         theaterChaseRainbow(strip)
+    elif effect == 'snake':
+        snake(strip, color)
     else:
         return {
             'error': 'unknown effect',
