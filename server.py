@@ -38,7 +38,7 @@ def colorWipe(strip, color, wait_ms=20):
         time.sleep(wait_ms/1000.0)
 
 
-def theaterChase(strip, color, iterations=1, wait_ms=50):
+def theaterChase(strip, color, iterations=10, wait_ms=20):
     """Movie theater light style chaser animation."""
     for j in range(iterations):
         for q in range(3):
@@ -80,7 +80,7 @@ def rainbowCycle(strip, wait_ms=20, iterations=1):
         time.sleep(wait_ms/1000.0)
 
 
-def theaterChaseRainbow(strip, wait_ms=50):
+def theaterChaseRainbow(strip, wait_ms=20):
     """Rainbow movie theater light style chaser animation."""
     for j in range(256):
         for q in range(3):
