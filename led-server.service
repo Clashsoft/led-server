@@ -1,0 +1,20 @@
+[Unit]
+Description = LED-Server
+After = network.target
+
+[Service]
+PermissionsStartOnly = true
+PIDFile = /run/led-server/led-server.pid
+User = root
+Group = root
+WorkingDirectory = /opt/led-server
+ExecStartPre = /bin/mkdir /run/led-server
+ExecStartPre = /bin/chown -R led-server:led-server /run/led-server
+ExecStart = /usr/bin/env gunicorn3 server:app -b 0.0.0.0:50390 --pid /run/led-server/led-server.pid
+ExecReload = /bin/kill -s HUP $MAINPID
+ExecStop = /bin/kill -s TERM $MAINPID
+ExecStopPost = /bin/rm -rf /run/led-server
+PrivateTmp = true
+
+[Install]
+WantedBy = multi-user.target
