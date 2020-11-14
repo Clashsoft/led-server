@@ -110,7 +110,11 @@ strip.begin()
 app = Flask(__name__)
 
 with open('keys.txt') as keyFile:
-    keys = set(line.strip() for line in keyFile if not line.strip().startswith('#'))
+    keys = set()
+    for line in keyFile:
+        stripped = line.strip()
+        if len(stripped) > 0 and not stripped.startswith('#'):
+            keys.add(stripped)
 
 
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
