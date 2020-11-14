@@ -109,11 +109,20 @@ strip.begin()
 
 app = Flask(__name__)
 
+with open('keys.txt') as keyFile:
+    keys = set(line.strip() for line in keyFile if not line.strip().startswith('#'))
+
 
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
 def set_color():
     if request.method == 'OPTIONS':
         return options()
+
+    key = request.headers['X-LED-Key']
+    if key not in keys:
+        return {
+            'error': 'invalid key',
+        }, 401
 
     body = request.json
     effect = body['effect']
