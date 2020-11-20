@@ -70,8 +70,10 @@ def set_color():
 
     for subscription in subscriptions:
         push.send_web_push(subscription, {
-            'name': keys[key],
-            'effect': body,
+            'notification': {
+                'title': 'LED Server',
+                'body': keys[key] + ': ' + body.message,
+            }
         })
 
     effect = body['effect']
