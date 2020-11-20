@@ -10,9 +10,12 @@ VAPID_CLAIMS = {'sub': 'mailto:clashsoft@hotmail.com'}
 
 
 def send_web_push(subscription_info, message_body):
-    webpush(
-        subscription_info=subscription_info,
-        data=json.dumps(message_body),
-        vapid_private_key=VAPID_PRIVATE_KEY,
-        vapid_claims=VAPID_CLAIMS,
-    )
+    try:
+        webpush(
+            subscription_info=subscription_info,
+            data=json.dumps(message_body),
+            vapid_private_key=VAPID_PRIVATE_KEY,
+            vapid_claims=VAPID_CLAIMS,
+        )
+    except WebPushException as ex:
+        print(ex)
