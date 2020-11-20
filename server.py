@@ -72,7 +72,7 @@ def set_color():
         push.send_web_push(subscription, {
             'notification': {
                 'title': 'LED Server',
-                'body': keys[key] + ': ' + body['message'],
+                'body': keys[key] + ': ' + body.get('message', ''),
             }
         })
 
