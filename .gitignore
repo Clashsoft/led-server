@@ -5,3 +5,6 @@ __pycache__/
 .idea/
 
 keys.txt
+vapid_private.pem
+private_key.txt
+public_key.txt
