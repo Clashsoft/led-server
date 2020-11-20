@@ -110,11 +110,12 @@ strip.begin()
 app = Flask(__name__)
 
 with open('keys.txt') as keyFile:
-    keys = set()
+    keys = dict()
     for line in keyFile:
         stripped = line.strip()
         if len(stripped) > 0 and not stripped.startswith('#'):
-            keys.add(stripped)
+            key, name = stripped.split(None, 1)
+            keys[key] = name
 
 
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
@@ -130,7 +131,7 @@ def set_color():
 
     body = request.json
 
-    print(key, 'played', body)
+    print(key, keys[key], 'played', body)
 
     effect = body['effect']
     color = Color(body['r'], body['g'], body['b'])
