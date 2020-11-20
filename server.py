@@ -129,6 +129,9 @@ def set_color():
         }, 401
 
     body = request.json
+
+    print(key, 'played', body)
+
     effect = body['effect']
     color = Color(body['r'], body['g'], body['b'])
     if effect == 'set':
