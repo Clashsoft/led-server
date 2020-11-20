@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath('.'))
 from flask import Flask, request, make_response
 
 import animations
+import push
 from rpi_ws281x_wrapper import Adafruit_NeoPixel
 
 # LED strip configuration:
@@ -35,6 +36,23 @@ with open('keys.txt') as keyFile:
             keys[key] = name
 
 
+subscriptions = []
+
+
+@app.route('/api/subscriptions', methods=['OPTIONS', 'POST'])
+def subscription():
+    if request.method == 'OPTIONS':
+        return options()
+
+    if keys[request.headers['X-LED-Key']] != 'Admin':
+        return {'error': 'invalid key'}, 401
+
+    body = request.json
+    subscription_info = body['subscriptionInfo']
+    subscriptions.append(subscription_info)
+    return {}
+
+
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
 def set_color():
     if request.method == 'OPTIONS':
@@ -49,6 +67,12 @@ def set_color():
     body = request.json
 
     print(key, keys[key], 'played', body)
+
+    for subscription in subscriptions:
+        push.send_web_push(subscription, {
+            'name': keys[key],
+            'effect': body,
+        })
 
     effect = body['effect']
     color = animations.Color(body['r'], body['g'], body['b'])
