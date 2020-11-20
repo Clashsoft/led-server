@@ -52,10 +52,10 @@ def set_color():
 
     effect = body['effect']
     color = animations.Color(body['r'], body['g'], body['b'])
-    if effect == 'set':
-        animations.colorSet(strip, color)
+    if effect == 'set' or effect == 'fill':
+        animations.fill(strip, color)
     elif effect == 'wipe':
-        animations.colorWipe(strip, color)
+        animations.wipe(strip, color)
     elif effect == 'theaterChase':
         animations.theaterChase(strip, color)
     elif effect == 'rainbow':
