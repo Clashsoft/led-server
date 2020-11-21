@@ -8,3 +8,4 @@ keys.txt
 vapid_private.pem
 private_key.txt
 public_key.txt
+db.sqlite
