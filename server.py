@@ -68,14 +68,6 @@ def set_color():
 
     print(key, keys[key], 'played', body)
 
-    for subscription in subscriptions:
-        push.send_web_push(subscription, {
-            'notification': {
-                'title': 'LED Server',
-                'body': keys[key] + ': ' + body.get('message', ''),
-            }
-        })
-
     effect = body['effect']
     color = animations.Color(body['r'], body['g'], body['b'])
     if effect == 'set' or effect == 'fill':
@@ -96,6 +88,14 @@ def set_color():
         return {
             'error': 'unknown effect',
         }
+
+    for subscription in subscriptions:
+        push.send_web_push(subscription, {
+            'notification': {
+                'title': 'LED Server',
+                'body': keys[key] + ': ' + body.get('message', ''),
+            }
+        })
 
     return {}
 
