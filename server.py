@@ -41,7 +41,7 @@ with open('keys.txt') as keyFile:
 
 # --------------- Database ---------------
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.sqlite"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -66,7 +66,7 @@ def subscription():
 
     body = request.json
     subscription_info = body['subscriptionInfo']
-    subscription = PushSubscription(token=subscription_info)
+    subscription = PushSubscription(token=json.dumps(subscription_info))
     db.session.add(subscription)
     db.session.commit()
     return {'id': subscription.id}
