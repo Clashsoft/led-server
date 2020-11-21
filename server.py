@@ -4,6 +4,9 @@ import sys
 sys.path.append(os.path.abspath('.'))
 
 from flask import Flask, request, make_response
+from flask_sqlalchemy import SQLAlchemy
+
+import json
 
 import animations
 import push
@@ -36,8 +39,22 @@ with open('keys.txt') as keyFile:
             keys[key] = name
 
 
-subscriptions = []
+# --------------- Database ---------------
 
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
+class PushSubscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    token = db.Column(db.Text, nullable=False)
+
+
+db.create_all()
+
+
+# --------------- Endpoints ---------------
 
 @app.route('/api/subscriptions', methods=['OPTIONS', 'POST'])
 def subscription():
@@ -49,8 +66,10 @@ def subscription():
 
     body = request.json
     subscription_info = body['subscriptionInfo']
-    subscriptions.append(subscription_info)
-    return {}
+    subscription = PushSubscription(token=subscription_info)
+    db.session.add(subscription)
+    db.session.commit()
+    return {'id': subscription.id}
 
 
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
@@ -89,13 +108,14 @@ def set_color():
             'error': 'unknown effect',
         }
 
-    for subscription in subscriptions:
-        push.send_web_push(subscription, {
-            'notification': {
-                'title': 'LED Server',
-                'body': keys[key] + ': ' + body.get('message', ''),
-            }
-        })
+    notification = {
+        'notification': {
+            'title': 'LED Server',
+            'body': keys[key] + ': ' + body.get('message', ''),
+        }
+    }
+    for subscription in PushSubscription.query.all():
+        push.send_web_push(json.loads(subscription.token), notification)
 
     return {}
 
