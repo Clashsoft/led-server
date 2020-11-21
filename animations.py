@@ -4,6 +4,7 @@ from rpi_ws281x_wrapper import Color
 
 
 def fill(strip, color):
+    """Set color for all pixels at once."""
     for i in range(strip.numPixels()):
         strip.setPixelColor(i, color)
     strip.show()
@@ -41,7 +42,7 @@ def wheel(pos):
         return Color(0, pos * 3, 255 - pos * 3)
 
 
-def rainbow(strip, wait_ms=20, iterations=1):
+def rainbow(strip, _, wait_ms=20, iterations=1):
     """Draw rainbow that fades across all pixels at once."""
     for j in range(iterations):
         for i in range(strip.numPixels()):
@@ -50,7 +51,7 @@ def rainbow(strip, wait_ms=20, iterations=1):
         time.sleep(wait_ms / 1000.0)
 
 
-def rainbowCycle(strip, wait_ms=20, iterations=1):
+def rainbowCycle(strip, _, wait_ms=20, iterations=1):
     """Draw rainbow that uniformly distributes itself across all pixels."""
     for j in range(256 * iterations):
         for i in range(strip.numPixels()):
@@ -59,7 +60,7 @@ def rainbowCycle(strip, wait_ms=20, iterations=1):
         time.sleep(wait_ms / 1000.0)
 
 
-def theaterChaseRainbow(strip, wait_ms=20):
+def theaterChaseRainbow(strip, _, wait_ms=20):
     """Rainbow movie theater light style chaser animation."""
     for j in range(256):
         for q in range(3):
@@ -72,6 +73,7 @@ def theaterChaseRainbow(strip, wait_ms=20):
 
 
 def snake(strip, color=Color(255, 255, 255), wait_ms=20, width=5):
+    """A few pixels light up and move across the strip."""
     black = Color(0, 0, 0)
     for i in range(strip.numPixels()):
         for j in range(strip.numPixels()):
@@ -79,3 +81,21 @@ def snake(strip, color=Color(255, 255, 255), wait_ms=20, width=5):
             strip.setPixelColor(j, color if delta >= 0 and delta < width else black)
         strip.show()
         time.sleep(wait_ms / 1000.0)
+
+
+class Effect:
+    def __init__(self, name, method):
+        self.name = name
+        self.method = method
+        self.description = method.__doc__
+
+
+effects = {
+    'fill': Effect('Fill', fill),
+    'wipe': Effect('Wipe', wipe),
+    'theaterChase': Effect('Theater Chase', theaterChase),
+    'rainbow': Effect('Rainbow', rainbow),
+    'rainbowCycle': Effect('Rainbow Cycle', rainbowCycle),
+    'theaterChaseRainbow': Effect('Theater Chase Rainbow', theaterChaseRainbow),
+    'snake': Effect('Snake', snake),
+}

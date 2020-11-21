@@ -72,6 +72,14 @@ def subscription():
     return {'id': subscription.id}
 
 
+@app.route('/api/effects', methods=['OPTIONS', 'GET'])
+def get_effects():
+    if request.method == 'OPTIONS':
+        return options()
+
+    return {id: {'name': effect.name, 'description': effect.description} for id, effect in animations.effects.items()}
+
+
 @app.route('/api/effect', methods=['POST', 'OPTIONS'])
 def set_color():
     if request.method == 'OPTIONS':
@@ -89,24 +97,11 @@ def set_color():
 
     effect = body['effect']
     color = animations.Color(body['r'], body['g'], body['b'])
-    if effect == 'set' or effect == 'fill':
-        animations.fill(strip, color)
-    elif effect == 'wipe':
-        animations.wipe(strip, color)
-    elif effect == 'theaterChase':
-        animations.theaterChase(strip, color)
-    elif effect == 'rainbow':
-        animations.rainbow(strip)
-    elif effect == 'rainbowCycle':
-        animations.rainbowCycle(strip)
-    elif effect == 'theaterChaseRainbow':
-        animations.theaterChaseRainbow(strip)
-    elif effect == 'snake':
-        animations.snake(strip, color)
-    else:
-        return {
-            'error': 'unknown effect',
-        }
+    effect = animations.effects.get(effect)
+    if effect is None:
+        return {'error': 'unknown effect'}, 404
+
+    effect.method(strip, color)
 
     notification = {
         'notification': {
