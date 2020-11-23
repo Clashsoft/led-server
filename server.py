@@ -58,6 +58,14 @@ class PlayEvent(db.Model):
     user = db.Column(db.Text, nullable=False)
     effect = db.Column(db.JSON, nullable=False)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'timestamp': self.timestamp.isoformat(),
+            'user': self.user,
+            'effect': self.effect,
+        }
+
 
 db.create_all()
 
@@ -116,10 +124,11 @@ def set_color():
     db.session.commit()
 
     notification = {
+        'event': play_event.to_dict(),
         'notification': {
             'title': 'LED Server',
             'body': keys[key] + ': ' + body.get('message', ''),
-        }
+        },
     }
     for subscription in PushSubscription.query.all():
         push.send_web_push(json.loads(subscription.token), notification)
@@ -137,12 +146,7 @@ def events():
 
     num_requested = int(request.args.get('count', 10))
     newest_events = db.session.query(PlayEvent).order_by(PlayEvent.timestamp.desc()).limit(num_requested)[::-1]
-    return jsonify([{
-        'id': event.id,
-        'timestamp': event.timestamp.isoformat(),
-        'user': event.user,
-        'effect': event.effect,
-    } for event in newest_events])
+    return jsonify([event.to_dict() for event in newest_events])
 
 
 def options():
