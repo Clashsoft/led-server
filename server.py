@@ -1,9 +1,10 @@
 import os
 import sys
+from datetime import datetime
 
 sys.path.append(os.path.abspath('.'))
 
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 import json
@@ -49,6 +50,13 @@ db = SQLAlchemy(app)
 class PushSubscription(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     token = db.Column(db.Text, nullable=False)
+
+
+class PlayEvent(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    user = db.Column(db.Text, nullable=False)
+    effect = db.Column(db.JSON, nullable=False)
 
 
 db.create_all()
@@ -103,6 +111,10 @@ def set_color():
 
     effect.method(strip, color)
 
+    play_event = PlayEvent(timestamp=datetime.now(), user=keys[key], effect=body)
+    db.session.add(play_event)
+    db.session.commit()
+
     notification = {
         'notification': {
             'title': 'LED Server',
@@ -113,6 +125,24 @@ def set_color():
         push.send_web_push(json.loads(subscription.token), notification)
 
     return {}
+
+
+@app.route('/api/events', methods=['GET', 'OPTIONS'])
+def events():
+    if request.method == 'OPTIONS':
+        return options()
+
+    if keys[request.headers['X-LED-Key']] != 'Admin':
+        return {'error': 'invalid key'}, 401
+
+    num_requested = int(request.args.get('count', 10))
+    newest_events = db.session.query(PlayEvent).order_by(PlayEvent.timestamp.desc()).limit(num_requested)[::-1]
+    return jsonify([{
+        'id': event.id,
+        'timestamp': event.timestamp.isoformat(),
+        'user': event.user,
+        'effect': event.effect,
+    } for event in newest_events])
 
 
 def options():
