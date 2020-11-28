@@ -83,6 +83,17 @@ def snake(strip, color=Color(255, 255, 255), wait_ms=20, width=5):
         time.sleep(wait_ms / 1000.0)
 
 
+def christmas(strip, color=Color(255, 0, 0)):
+    """
+    Alternates between the color and an shifted version of it
+    (red becomes green, green becomes blue, blue becomes red).
+    """
+    shifted = ((color >> 8) | (color << 16)) & 0xffffff
+    for i in range(strip.numPixels()):
+        strip.setPixelColor(i, color if i % 2 == 0 else shifted)
+    strip.show()
+
+
 class Effect:
     def __init__(self, name, method):
         self.name = name
@@ -98,4 +109,5 @@ effects = {
     'rainbowCycle': Effect('Rainbow Cycle', rainbowCycle),
     'theaterChaseRainbow': Effect('Theater Chase Rainbow', theaterChaseRainbow),
     'snake': Effect('Snake', snake),
+    'christmas': Effect('Christmas Lights', christmas),
 }
