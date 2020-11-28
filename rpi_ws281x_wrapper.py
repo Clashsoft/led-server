@@ -4,11 +4,8 @@ try:
     Color = rpi_ws281x.Color
     Adafruit_NeoPixel = rpi_ws281x.Adafruit_NeoPixel
 except ImportError:
-    class Color:
-        def __init__(self, r, g, b):
-            self.r = r
-            self.g = g
-            self.b = b
+    def Color(red, green, blue, white=0):
+        return (white << 24) | (red << 16) | (green << 8) | blue
 
 
     class Adafruit_NeoPixel:
