@@ -85,8 +85,8 @@ def snake(strip, color=Color(255, 255, 255), wait_ms=20, width=5):
 
 def christmas(strip, color=Color(255, 0, 0), width=4):
     """
-    Alternates between the color and an shifted version of it
-    (red becomes green, green becomes blue, blue becomes red).
+    Alternates between the color and a shifted version of it
+    (red becomes green becomes blue becomes red).
     """
     shifted = ((color >> 8) | (color << 16)) & 0xffffff
     for i in range(strip.numPixels()):
