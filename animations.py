@@ -83,19 +83,17 @@ def snake(strip, color=Color(255, 255, 255), wait_ms=20, width=5):
         time.sleep(wait_ms / 1000.0)
 
 
-def christmas(strip, color=Color(255, 0, 0), spacing=4):
+def christmas(strip, color=Color(255, 0, 0), width=4):
     """
     Alternates between the color and an shifted version of it
     (red becomes green, green becomes blue, blue becomes red).
     """
     shifted = ((color >> 8) | (color << 16)) & 0xffffff
     for i in range(strip.numPixels()):
-        if i % (spacing * 2) == 0:
+        if i % (width * 2) < width:
             pixel_color = color
-        elif i % (spacing * 2) == spacing:
-            pixel_color = shifted
         else:
-            pixel_color = 0
+            pixel_color = shifted
         strip.setPixelColor(i, pixel_color)
     strip.show()
 
